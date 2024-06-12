@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+  
+  <arg name="flying_object" default="$(find cvae_van)/urdf/flying_object.urdf"/>
+  <arg name="x" default="10.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.3"/>
+  <arg name="Y" default="0.0"/>
+
+  <param name="object_description" command="cat $(arg flying_object)" />
+    <node name="object_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -x $(arg x) -y $(arg y) -z $(arg z) -Y $(arg Y) -model $(arg flying_object) -param object_description"/>
+
+  <node pkg="cvae_van" type="target_teleop" name="target_teleop"/>
+  <include file="$(find ds4_driver)/launch/ds4_driver.launch"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="obs_6_odom_trans" args="0.0 0 0 0 0 0 map flying_object/odom 100"/>
+
+
+</launch>

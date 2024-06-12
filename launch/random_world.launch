@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="enable_visualization" default="true"/>
+          
+    <arg name="target" default="$(find diff_opt_tracking)/urdf/target.urdf" />
+    <arg name="target_name" default="target" />
+
+
+    <arg name="drone_x" default="-3"/>
+    <arg name="drone_y" default="0"/>
+    <arg name="drone_z" default="0"/>
+    <arg name="drone_yaw" default="0"/>
+
+    <arg name="x_target" default="-0.6" />
+    <arg name="y_target" default="-1" />
+    <arg name="z_target" default="0.0" />
+    <arg name="roll_target" default="0.0"/>
+    <arg name="pitch_target" default="0"/>
+    <arg name="yaw_target" default="0" />
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="paused" value="$(arg paused)"/>
+      <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+      <arg name="gui" value="$(arg gui)"/>
+      <arg name="headless" value="$(arg headless)"/>
+      <arg name="debug" value="$(arg debug)"/>
+      <arg name="world_name" value="$(find diff_opt_tracking)/worlds/random.world"/>
+    </include>
+
+    <include file="$(find bebop_gazebo)/launch/spawn_bebop.launch">
+      <arg name="x" value="$(arg drone_x)"/>
+      <arg name="y" value="$(arg drone_y)"/>
+      <arg name="z" value="$(arg drone_z)"/>
+      <arg name="Y" value="$(arg drone_yaw)"/>
+    </include>
+
+    
+    
+    <param name="target_description" command="cat $(arg target)" />
+    <node name="$(arg target_name)_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="-urdf -x $(arg x_target) -y $(arg y_target) -z $(arg z_target) -R $(arg roll_target) -P $(arg pitch_target) -Y $(arg yaw_target) -model $(arg target_name) -param target_description"/>
+
+
+    <include file="$(find diff_opt_tracking)/launch/laser_assembler.launch"/>
+    <node pkg="diff_opt_tracking" type="laser_to_pointcloud.py" name="laser_to_pointcloud"/>
+    <node pkg="tf" type="static_transform_publisher" name="bebop_trans" args="0.0 0 0 0 0 0 world odom 100"/>
+    <node pkg="diff_opt_tracking" type="line_of_sight_visualizer.py" name="line_sight"/>
+    <node pkg="tf" type="static_transform_publisher" name="los_tf" args="0 0 0 0 0 0 world los 100" />
+    <node pkg="tf" type="static_transform_publisher" name="base_tf" args="0 0 0 0 0 0 world base 100" />
+
+<group if="$(arg enable_visualization)">
+
+    <node pkg="tf" type="static_transform_publisher" name="target_trans" args="0.0 0 1.5 0 0 0 target/base_footprint pillar_box 100"/>
+    <node pkg="tf" type="static_transform_publisher" name="target_odom_trans" args="0.0 0 0 0 0 0 world target/odom 100"/>
+    <node type="rviz" name="rviz_random_world" pkg="rviz" args="-d $(find diff_opt_tracking)/config/random_world.rviz" />
+
+  </group>
+
+   <include file="$(find gazebo2rviz)/launch/gazebo2rviz.launch"/> 
+</launch>
