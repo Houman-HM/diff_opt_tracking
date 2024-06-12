@@ -5,7 +5,7 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="enable_visualization" default="true"/>
+  <arg name="enable_visualization" default="false"/>
           
     <arg name="target" default="$(find diff_opt_tracking)/urdf/target.urdf" />
     <arg name="target_name" default="target" />
