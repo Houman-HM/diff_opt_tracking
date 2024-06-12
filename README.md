@@ -31,4 +31,4 @@ This launches a random environment with various obstacles in Gazebo.
 ```
 rosrun diff_opt_tracking planner.py
 ```
-You can now publish velcoities on "target/cmd_vel" topic to move the target. As the target moves, the robot would follow it while avoiding occlusions and collisons.
+You can now publish velcoities on "target/cmd_vel" topic to move the target. As the target moves, the robot would follow it while avoiding occlusions and collisions.
