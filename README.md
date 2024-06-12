@@ -2,7 +2,7 @@
 
 This repository is associated with our RAL submission paper: "Differentiable-Optimization Based Neural Policy for Occlusion-Aware Target Tracking".
 
-# Dependencies:
+# Dependencies
 
 * [JAX](https://github.com/google/jax)
 * [bebop_simulator](https://github.com/Houman-HM/bebop_simulator/tree/bebop_hokuyo)
